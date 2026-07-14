@@ -1,0 +1,230 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1784014493406,
+  "projectRoot": "/Users/mac_al03256431/Documents/DEV/1_JB_Wooricapital_Auto_Agent_Neo4j",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "assets",
+      "docs",
+      "scripts"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "assets": {
+      "path": "assets",
+      "purpose": "Static assets",
+      "fileCount": 2,
+      "lastAccessed": 1784014493393,
+      "keyFiles": [
+        "demo_single.png"
+      ]
+    },
+    "backend": {
+      "path": "backend",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1784014493393,
+      "keyFiles": [
+        "requirements.txt"
+      ]
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 13,
+      "lastAccessed": 1784014493394,
+      "keyFiles": [
+        "01_전체_아키텍처_설계문서.md",
+        "02_Phase1_PoC_설계서.md",
+        "03_단위테스트_계획.md",
+        "04_검색품질_진단_2026-06-22.md",
+        "06_Hybrid_구조화_가이드.md"
+      ]
+    },
+    "frontend": {
+      "path": "frontend",
+      "purpose": null,
+      "fileCount": 6,
+      "lastAccessed": 1784014493394,
+      "keyFiles": [
+        "index.html",
+        "package-lock.json",
+        "package.json",
+        "tsconfig.json",
+        "vite.config.ts"
+      ]
+    },
+    "graph_output": {
+      "path": "graph_output",
+      "purpose": null,
+      "fileCount": 4,
+      "lastAccessed": 1784014493395,
+      "keyFiles": [
+        "GRAPH_REPORT.md",
+        "graph.html",
+        "graph.json",
+        "graph_artifact.html"
+      ]
+    },
+    "graphify-out": {
+      "path": "graphify-out",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1784014493395,
+      "keyFiles": []
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 4,
+      "lastAccessed": 1784014493395,
+      "keyFiles": [
+        "backend-start.sh",
+        "backend-stop.sh",
+        "frontend-start.sh",
+        "frontend-stop.sh"
+      ]
+    },
+    "source": {
+      "path": "source",
+      "purpose": null,
+      "fileCount": 12,
+      "lastAccessed": 1784014493396,
+      "keyFiles": [
+        "10_샘플_중형트럭 시범운영기준.pdf",
+        "4_오토운영팀 FAQ 가명샘플.pdf",
+        "4_오토운영팀 FAQ 가명샘플.xlsx",
+        "5_재고금융_운영자금심사운영기준.md",
+        "6_중고오토리스심사운영기준.docx"
+      ]
+    },
+    "source 복사본": {
+      "path": "source 복사본",
+      "purpose": null,
+      "fileCount": 11,
+      "lastAccessed": 1784014493396,
+      "keyFiles": [
+        "10_샘플_중형트럭 시범운영기준.pdf",
+        "4_오토운영팀 FAQ 가명샘플.pdf",
+        "5_재고금융_운영자금심사운영기준.docx",
+        "5_재고금융_운영자금심사운영기준.pdf",
+        "6_중고오토리스심사운영기준.docx"
+      ]
+    },
+    "backend/app": {
+      "path": "backend/app",
+      "purpose": "Application code",
+      "fileCount": 5,
+      "lastAccessed": 1784014493396,
+      "keyFiles": [
+        "__init__.py",
+        "config.py",
+        "logging_setup.py"
+      ]
+    },
+    "backend/data": {
+      "path": "backend/data",
+      "purpose": "Data files",
+      "fileCount": 4,
+      "lastAccessed": 1784014493396,
+      "keyFiles": [
+        "README.md",
+        "nego_rule.csv",
+        "promotion.csv"
+      ]
+    },
+    "backend/tests": {
+      "path": "backend/tests",
+      "purpose": "Test files",
+      "fileCount": 6,
+      "lastAccessed": 1784014493397,
+      "keyFiles": [
+        "__init__.py",
+        "test_api_endpoints.py",
+        "test_ingestion.py"
+      ]
+    },
+    "frontend/dist": {
+      "path": "frontend/dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 1,
+      "lastAccessed": 1784014493397,
+      "keyFiles": [
+        "index.html"
+      ]
+    },
+    "frontend/node_modules": {
+      "path": "frontend/node_modules",
+      "purpose": "Dependencies",
+      "fileCount": 1,
+      "lastAccessed": 1784014493397,
+      "keyFiles": []
+    },
+    "frontend/src": {
+      "path": "frontend/src",
+      "purpose": "Source code",
+      "fileCount": 2,
+      "lastAccessed": 1784014493398,
+      "keyFiles": [
+        "App.tsx",
+        "main.tsx"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "scripts/backend-start.sh",
+      "accessCount": 1,
+      "lastAccessed": 1783316542428,
+      "type": "file"
+    },
+    {
+      "path": "scripts/backend-stop.sh",
+      "accessCount": 1,
+      "lastAccessed": 1783316542604,
+      "type": "file"
+    },
+    {
+      "path": "scripts/frontend-start.sh",
+      "accessCount": 1,
+      "lastAccessed": 1783316542773,
+      "type": "file"
+    },
+    {
+      "path": "scripts/frontend-stop.sh",
+      "accessCount": 1,
+      "lastAccessed": 1783316543782,
+      "type": "file"
+    },
+    {
+      "path": "start.md",
+      "accessCount": 1,
+      "lastAccessed": 1783318415070,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

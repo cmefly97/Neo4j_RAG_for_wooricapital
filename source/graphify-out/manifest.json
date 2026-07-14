@@ -1,0 +1,47 @@
+{
+  ".omc/state/sessions/636b0e45-8aa1-4c3a-b40b-d83480ff5bd3/pre-tool-advisory-throttle.json": {
+    "mtime": 1782486606.8491266,
+    "ast_hash": "e0ad99e9469ccbb617cc85e05a3cc040",
+    "semantic_hash": "e0ad99e9469ccbb617cc85e05a3cc040"
+  },
+  "5_\u110c\u1162\u1100\u1169\u1100\u1173\u11b7\u110b\u1172\u11bc_\u110b\u116e\u11ab\u110b\u1167\u11bc\u110c\u1161\u1100\u1173\u11b7\u1109\u1175\u11b7\u1109\u1161\u110b\u116e\u11ab\u110b\u1167\u11bc\u1100\u1175\u110c\u116e\u11ab.md": {
+    "mtime": 1782221621.0,
+    "ast_hash": "762a200e8de79bd8f433ab764a53acb6",
+    "semantic_hash": "762a200e8de79bd8f433ab764a53acb6"
+  },
+  "6_\u110c\u116e\u11bc\u1100\u1169\u110b\u1169\u1110\u1169\u1105\u1175\u1109\u1173\u1109\u1175\u11b7\u1109\u1161\u110b\u116e\u11ab\u110b\u1167\u11bc\u1100\u1175\u110c\u116e\u11ab.md": {
+    "mtime": 1782221640.0,
+    "ast_hash": "56cc6796ddd330415c6de8927239eb9f",
+    "semantic_hash": "56cc6796ddd330415c6de8927239eb9f"
+  },
+  "7_\u110c\u116e\u11bc\u1100\u1169\u110e\u1161\u1109\u1173\u11bc\u110b\u116d\u11bc\u1109\u1175\u11b7\u1109\u1161\u110b\u116e\u11ab\u110b\u1167\u11bc\u1100\u1175\u110c\u116e\u11ab.md": {
+    "mtime": 1782221654.0,
+    "ast_hash": "371fdb11ea01fa3e97644857661784fd",
+    "semantic_hash": "371fdb11ea01fa3e97644857661784fd"
+  },
+  "\u110b\u1169\u1110\u1169\u110b\u116e\u11ab\u110b\u1167\u11bc\u1110\u1175\u11b7 \u110b\u1169\u11ab\u1110\u1169\u11af\u1105\u1169\u110c\u1175 \u1106\u1175\u11be \u110b\u1166\u110b\u1175\u110c\u1165\u11ab\u1110\u1173.md": {
+    "mtime": 1782105538.0,
+    "ast_hash": "22d9cb422366c5d5e021ec1e757a6c75",
+    "semantic_hash": "22d9cb422366c5d5e021ec1e757a6c75"
+  },
+  "10_\u1109\u1162\u11b7\u1111\u1173\u11af_\u110c\u116e\u11bc\u1112\u1167\u11bc\u1110\u1173\u1105\u1165\u11a8 \u1109\u1175\u1107\u1165\u11b7\u110b\u116e\u11ab\u110b\u1167\u11bc\u1100\u1175\u110c\u116e\u11ab.pdf": {
+    "mtime": 1782105068.0,
+    "ast_hash": "cc6b230aa7bf2ed02c8045b3fb1a8098",
+    "semantic_hash": "cc6b230aa7bf2ed02c8045b3fb1a8098"
+  },
+  "4_\u110b\u1169\u1110\u1169\u110b\u116e\u11ab\u110b\u1167\u11bc\u1110\u1175\u11b7 FAQ \u1100\u1161\u1106\u1167\u11bc\u1109\u1162\u11b7\u1111\u1173\u11af.pdf": {
+    "mtime": 1782107167.0,
+    "ast_hash": "c5cd189fb7c99edcaf04d8206de15e4b",
+    "semantic_hash": "c5cd189fb7c99edcaf04d8206de15e4b"
+  },
+  "8_\u1109\u1162\u11b7\u1111\u1173\u11af_\u110c\u116e\u11bc\u1100\u1169\u1105\u1175\u1109\u1173 \u110b\u116e\u11ab\u110b\u1167\u11bc\u1100\u1175\u110c\u116e\u11ab(\u1107\u1167\u11ab\u1100\u1167\u11bc).pdf": {
+    "mtime": 1782105068.0,
+    "ast_hash": "8450fa56394c0d9841bd7da7266137d0",
+    "semantic_hash": "8450fa56394c0d9841bd7da7266137d0"
+  },
+  "9_\u1109\u1162\u11b7\u1111\u1173\u11af_\u110c\u116e\u11bc\u1100\u1169\u1109\u1173\u11bc\u110b\u116d\u11bc \u1109\u1161\u11bc\u1111\u116e\u11b7\u110b\u116e\u11ab\u110b\u1167\u11bc\u1100\u1175\u110c\u116e\u11ab.pdf": {
+    "mtime": 1782105068.0,
+    "ast_hash": "9a2c6e8154cfbdd8daa8a337bc567907",
+    "semantic_hash": "9a2c6e8154cfbdd8daa8a337bc567907"
+  }
+}

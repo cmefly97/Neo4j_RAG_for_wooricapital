@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"uv tool install graphifyy 2>&1\",\"description\":\"Install graphifyy CLI tool via uv\"}",
+  "error": "Exit code 2\nResolved 30 packages in 9ms\nInstalled 30 packages in 38ms\n + graphifyy==0.8.49\n + networkx==3.6.1\n + numpy==2.5.0\n + rapidfuzz==3.14.5\n + tree-sitter==0.25.2\n + tree-sitter-bash==0.25.1\n + tree-sitter-c==0.24.2\n + tree-sitter-c-sharp==0.23.5\n + tree-sitter-cpp==0.23.4\n + tree-sitter-elixir==0.3.5\n + tree-sitter-fortran==0.6.0\n + tree-sitter-go==0.25.0\n + tree-sitter-groovy==0.1.2\n + tree-sitter-java==0.23.5\n + tree-sitter-javascript==0.25.0\n + tree-sitter-json==0.24.8\n + tree-sitter-...",
+  "timestamp": "2026-06-26T14:23:10.287Z",
+  "retry_count": 1
+}

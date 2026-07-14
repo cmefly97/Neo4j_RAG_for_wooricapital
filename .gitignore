@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Env / secrets
+.env
+*.local
+
+# OS
+.DS_Store
+
+# Neo4j 로컬 데이터(미사용 — 리모트 서버 연결)
+neo4j/data/
+neo4j/logs/
+
+# 원본 문서는 버전관리 제외 (민감/대용량) — 필요시 조정
+# source/
+.write_test
+
+# 로그
+backend/logs/
+logs/
+
+backend/eval_results/
+frontend/node_modules/
+frontend/dist/
+frontend/src/**/*.js
+frontend/vite.config.ts.timestamp-*

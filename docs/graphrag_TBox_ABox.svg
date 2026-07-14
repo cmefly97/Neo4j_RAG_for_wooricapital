@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 720" font-family="Pretendard, -apple-system, 'Malgun Gothic', sans-serif" role="img" aria-labelledby="t d">
+  <title id="t">GraphRAG 스키마 — TBox(온톨로지) / ABox(인스턴스)</title>
+  <desc id="d">상품·금리등급·판정·차량조건 클래스(TBox)와 그 실제 인스턴스(ABox)를 나눠 표현한 지식그래프 스키마</desc>
+  <defs>
+    <marker id="arw" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#8a94a0"/></marker>
+    <marker id="arwo" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#d85a30"/></marker>
+  </defs>
+
+  <text x="24" y="34" font-size="24" font-weight="800" fill="#1b2733">GraphRAG 스키마 — TBox / ABox</text>
+  <text x="26" y="54" font-size="13" fill="#5b6b7c">온톨로지(개념·고정 스키마) + 인스턴스(문서에서 추출한 실제 값)로 지식그래프를 구성</text>
+
+  <!-- ===== 좌측 큰 패널 ===== -->
+  <rect x="20" y="66" width="800" height="636" rx="14" fill="#f6f8fa" stroke="#e3e8ee"/>
+
+  <!-- TBox chip -->
+  <rect x="34" y="80" width="72" height="26" rx="6" fill="#534ab7"/>
+  <text x="70" y="98" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">TBox</text>
+
+  <!-- 관계 아크 (상품 → 판정 / 차량조건) -->
+  <path d="M150,150 C 340,96 430,96 522,138" fill="none" stroke="#d85a30" stroke-width="2" marker-end="url(#arwo)"/>
+  <text x="360" y="104" font-size="12" fill="#993c1d" text-anchor="middle">HAS_DECISION</text>
+  <path d="M150,146 C 430,82 640,82 717,138" fill="none" stroke="#d85a30" stroke-width="2" marker-end="url(#arwo)"/>
+  <text x="600" y="92" font-size="12" fill="#993c1d" text-anchor="middle">HAS_CONDITION</text>
+
+  <!-- TBox 클래스 박스 -->
+  <!-- 상품 -->
+  <rect x="55" y="140" width="155" height="64" rx="10" fill="#eef7f2" stroke="#18a66e" stroke-width="1.6"/>
+  <text x="132" y="170" font-size="16" font-weight="700" fill="#0f6e56" text-anchor="middle">상품</text>
+  <text x="132" y="190" font-size="11" fill="#5dcaa5" text-anchor="middle">Product</text>
+  <!-- HAS_RATE 직선 -->
+  <line x1="210" y1="172" x2="250" y2="172" stroke="#8a94a0" stroke-width="2" marker-end="url(#arw)"/>
+  <text x="230" y="164" font-size="12" fill="#5b6b7c" text-anchor="middle">HAS_RATE</text>
+  <!-- 금리등급 -->
+  <rect x="250" y="140" width="155" height="64" rx="10" fill="#eef4fb" stroke="#0e5a8a" stroke-width="1.6"/>
+  <text x="327" y="170" font-size="16" font-weight="700" fill="#0b3d5c" text-anchor="middle">금리등급</text>
+  <text x="327" y="190" font-size="11" fill="#1f7fc0" text-anchor="middle">RateGrade</text>
+  <!-- 판정 -->
+  <rect x="445" y="140" width="155" height="64" rx="10" fill="#fdecea" stroke="#c0392b" stroke-width="1.6"/>
+  <text x="522" y="170" font-size="16" font-weight="700" fill="#8a2d22" text-anchor="middle">판정</text>
+  <text x="522" y="190" font-size="11" fill="#c0392b" text-anchor="middle">Decision</text>
+  <!-- 차량조건 -->
+  <rect x="640" y="140" width="155" height="64" rx="10" fill="#eeedfe" stroke="#7a5cc0" stroke-width="1.6"/>
+  <text x="717" y="168" font-size="15" font-weight="700" fill="#4a3f8a" text-anchor="middle">차량조건</text>
+  <text x="717" y="190" font-size="11" fill="#7f77dd" text-anchor="middle">VehicleCondition</text>
+
+  <!-- subClassOf: 신용구제상품 -->
+  <line x1="132" y1="204" x2="132" y2="242" stroke="#18a66e" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arw)"/>
+  <text x="158" y="228" font-size="11" fill="#5b6b7c">subClassOf</text>
+  <rect x="55" y="242" width="155" height="50" rx="10" fill="#f3faf6" stroke="#9fe1cb" stroke-width="1.4"/>
+  <text x="132" y="272" font-size="13" font-weight="600" fill="#0f6e56" text-anchor="middle">신용구제상품 (SP_R)</text>
+
+  <!-- ABox chip -->
+  <rect x="34" y="332" width="72" height="26" rx="6" fill="#d85a30"/>
+  <text x="70" y="350" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">ABox</text>
+
+  <!-- 열 헤더 + 세로 점선 커넥터 -->
+  <g font-size="11" fill="#8a94a0" text-anchor="middle">
+    <text x="132" y="380">상품 인스턴스</text>
+    <text x="327" y="380">금리등급 인스턴스</text>
+    <text x="522" y="380">판정 인스턴스</text>
+    <text x="717" y="380">차량조건 인스턴스</text>
+  </g>
+  <g stroke-dasharray="3 4" stroke-width="1">
+    <line x1="132" y1="204" x2="132" y2="392" stroke="#bcdccb"/>
+    <line x1="327" y1="204" x2="327" y2="392" stroke="#bcd4ee"/>
+    <line x1="522" y1="204" x2="522" y2="392" stroke="#f0c4bc"/>
+    <line x1="717" y1="204" x2="717" y2="392" stroke="#cdc7f0"/>
+  </g>
+
+  <!-- ABox 인스턴스 (4열 × 4행) -->
+  <!-- 상품 -->
+  <g fill="#eef7f2" stroke="#cfe9db"><rect x="55" y="396" width="155" height="42" rx="8"/><rect x="55" y="446" width="155" height="42" rx="8"/><rect x="55" y="496" width="155" height="42" rx="8"/></g>
+  <rect x="55" y="546" width="155" height="42" rx="8" fill="#f3faf6" stroke="#9fe1cb" stroke-dasharray="5 3"/>
+  <g font-size="12.5" fill="#204a38" text-anchor="middle">
+    <text x="132" y="422">중고승용 할부</text><text x="132" y="472">Dual Offer</text>
+    <text x="132" y="522">엔카 무수수료</text><text x="132" y="572">신용구제(SP_R) ◆</text>
+  </g>
+  <!-- 금리등급 -->
+  <g fill="#eef4fb" stroke="#d4e4f3"><rect x="250" y="396" width="155" height="42" rx="8"/><rect x="250" y="446" width="155" height="42" rx="8"/><rect x="250" y="496" width="155" height="42" rx="8"/></g>
+  <rect x="250" y="546" width="155" height="42" rx="8" fill="#f2f7fc" stroke="#bcd4ee" stroke-dasharray="5 3"/>
+  <g font-size="12.5" fill="#0b3d5c" text-anchor="middle">
+    <text x="327" y="422">2등급 · 21.0%</text><text x="327" y="472">3등급 · 22.0%</text>
+    <text x="327" y="522">4등급 · 23.0%</text><text x="327" y="572">5등급 · 24.0% ◆</text>
+  </g>
+  <!-- 판정 -->
+  <g fill="#fdecea" stroke="#f0c4bc"><rect x="445" y="396" width="155" height="42" rx="8"/><rect x="445" y="446" width="155" height="42" rx="8"/><rect x="445" y="496" width="155" height="42" rx="8"/></g>
+  <rect x="445" y="546" width="155" height="42" rx="8" fill="#fdf2f0" stroke="#f0c4bc" stroke-dasharray="5 3"/>
+  <g font-size="12.5" fill="#8a2d22" text-anchor="middle">
+    <text x="522" y="422">정상 · 취급가능</text><text x="522" y="472">R판정 · 취급불가</text>
+    <text x="522" y="522">필터링 대상</text><text x="522" y="572">(신규) ◆</text>
+  </g>
+  <!-- 차량조건 -->
+  <g fill="#eeedfe" stroke="#cecbf6"><rect x="640" y="396" width="155" height="42" rx="8"/><rect x="640" y="446" width="155" height="42" rx="8"/><rect x="640" y="496" width="155" height="42" rx="8"/></g>
+  <rect x="640" y="546" width="155" height="42" rx="8" fill="#f4f3fd" stroke="#cecbf6" stroke-dasharray="5 3"/>
+  <g font-size="12" fill="#4a3f8a" text-anchor="middle">
+    <text x="717" y="422">19년식 이내</text><text x="717" y="472">주행거리 ≤500만km</text>
+    <text x="717" y="522">카히스토리 ≤33백만</text><text x="717" y="572">특수사고 없음 ◆</text>
+  </g>
+
+  <text x="806" y="688" font-size="11" fill="#9aa6b2" text-anchor="end">◆ 신규(추출) 데이터</text>
+
+  <!-- ===== 우측 설명 ===== -->
+  <rect x="850" y="66" width="308" height="636" rx="14" fill="#ffffff" stroke="#e3e8ee"/>
+  <text x="872" y="104" font-size="15" font-weight="800" fill="#534ab7">TBox — 온톨로지(고정 스키마)</text>
+  <foreignObject x="872" y="116" width="266" height="150">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="font:13px/1.6 Pretendard,-apple-system,sans-serif;color:#33404d">
+      시스템 설계 시 한 번 확정되면 이후 <b style="color:#534ab7">모든 데이터에 공통 적용되는 고정 스키마</b>.
+      화이트리스트 7종만 허용: <b>Product · RateGrade · Nego · Decision · VehicleCondition · HandlingRule · Term</b> → 스키마 드리프트 방지.
+    </div>
+  </foreignObject>
+
+  <text x="872" y="300" font-size="15" font-weight="800" fill="#d85a30">ABox — 인스턴스(실제 값)</text>
+  <foreignObject x="872" y="312" width="266" height="170">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="font:13px/1.6 Pretendard,-apple-system,sans-serif;color:#33404d">
+      데이터가 TBox 규칙에 따라 매핑될 때마다 인스턴스가 지속 누적. <br/>
+      <b style="color:#d85a30">build_structured</b>가 문서에서 추출해 <code style="background:#f0f1f3;padding:1px 4px;border-radius:4px">origin='structured'</code> 로 적재.
+      값 속성 예: <code style="background:#f0f1f3;padding:1px 4px;border-radius:4px">RateGrade {grade:2, gl_rate:"21.0%", max_months:72}</code>.
+    </div>
+  </foreignObject>
+
+  <text x="872" y="520" font-size="13" font-weight="700" fill="#1b2733">관계(REL) 예</text>
+  <foreignObject x="872" y="530" width="266" height="150">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="font:12.5px/1.7 Pretendard,-apple-system,sans-serif;color:#3a4654">
+      HAS_RATE · HAS_NEGO · HAS_DECISION · HAS_CONDITION · HAS_RULE · APPLIES_TO<br/>
+      <span style="color:#8a94a0">청크는 별도 레이어(:Chunk)로 원문 보존 — 검색은 청크, 정밀값은 ABox.</span>
+    </div>
+  </foreignObject>
+</svg>

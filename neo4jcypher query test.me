@@ -1,0 +1,68 @@
+# Neo4j 브라우저 Cypher 테스트 쿼리 모음
+
+우리캐피탈 중고자동차 PoC 데이터(`:Document`, `:Chunk`, `:Chunk-[:PART_OF]->:Document`) 점검용.
+브라우저(http://223.130.140.218:7474/browser) 쿼리 편집기에 한 개씩 붙여넣어 실행한다.
+
+> 참고: 현재 기본 `neo4j` DB에는 다른 프로젝트(영화 데이터셋)도 섞여 있다.
+> 우리 데이터는 `:Chunk` / `:Document` 라벨로만 조회하면 분리해서 볼 수 있다.
+
+---
+
+## 1. 라벨별 노드 수 (전체 현황 + 데이터 섞임 확인)
+```cypher
+MATCH (n)
+RETURN labels(n) AS labels, count(*) AS n
+ORDER BY n DESC;
+```
+
+## 2. 우리 문서 목록 + 문서별 청크 수
+```cypher
+MATCH (d:Document)
+RETURN d.name AS 문서,
+       count{ (c:Chunk)-[:PART_OF]->(d) } AS 청크수,
+       d.source_file AS 출처
+ORDER BY 문서;
+```
+
+## 3. 청크 본문 키워드 검색 (예: 엔카 슬라이딩)
+```cypher
+MATCH (c:Chunk)
+WHERE toLower(c.text) CONTAINS toLower('엔카 슬라이딩')
+RETURN c.source_file AS 출처, c.locator AS 위치, c.text AS 본문
+LIMIT 5;
+```
+
+## 4. 정답값이 실제로 적재됐는지 확인 (예: 취급 개월수 12~72개월)
+```cypher
+MATCH (c:Chunk)
+WHERE c.text CONTAINS '12~72'
+RETURN c.source_file AS 출처, left(c.text, 200) AS 미리보기
+LIMIT 5;
+```
+
+## 5. 듀얼상품 확인 (문서는 한글 "듀얼"이 아닌 영문 "Dual" 사용)
+```cypher
+MATCH (c:Chunk)
+WHERE c.text CONTAINS 'Dual'
+RETURN c.source_file AS 출처, c.locator AS 위치, c.text AS 본문
+LIMIT 5;
+```
+
+## 6. 앱의 검색 로직 재현 (여러 키워드 매칭 개수로 점수 정렬)
+```cypher
+WITH ['금리등급','등급','21.0'] AS kws
+MATCH (c:Chunk)
+WHERE any(kw IN kws WHERE toLower(c.text) CONTAINS toLower(kw))
+WITH c, size([kw IN kws WHERE toLower(c.text) CONTAINS toLower(kw)]) AS score
+RETURN c.source_file AS 출처, score, left(c.text, 200) AS 미리보기
+ORDER BY score DESC
+LIMIT 6;
+```
+
+## 7. 특정 문서의 청크 그래프 시각화 (예: 중고승용)
+```cypher
+MATCH (c:Chunk)-[r:PART_OF]->(d:Document)
+WHERE d.name CONTAINS '중고승용'
+RETURN c, r, d
+LIMIT 50;
+```

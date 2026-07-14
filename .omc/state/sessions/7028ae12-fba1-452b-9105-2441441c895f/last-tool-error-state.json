@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"echo \\\"=== uv ===\\\"; which uv 2>&1; echo \\\"=== python3 ===\\\"; which python3 2>&1; python3 --version 2>&1; echo \\\"=== graphify bin ===\\\"; which graphify 2>&1; echo \\\"=== import graphify ===...",
+  "error": "Exit code 1\n=== uv ===\n/Users/mac_al03256431/.local/bin/uv\n=== python3 ===\n/opt/homebrew/bin/python3\nPython 3.14.6\n=== graphify bin ===\n/Users/mac_al03256431/.local/bin/graphify\n=== import graphify ===\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    import graphify; print('OK', graphify.__file__)\n    ^^^^^^^^^^^^^^^\nModuleNotFoundError: No module named 'graphify'",
+  "timestamp": "2026-06-26T14:28:28.763Z",
+  "retry_count": 1
+}

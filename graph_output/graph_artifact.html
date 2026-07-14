@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>우리캐피탈 오토운영팀 온톨로지 그래프</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --ink:#e6edf3; --muted:#8b949e; --line:#30363d;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Malgun Gothic",sans-serif;
+    overflow:hidden}
+  #wrap{display:flex;flex-direction:column;height:100%}
+  header{padding:10px 16px;border-bottom:1px solid var(--line);flex:0 0 auto}
+  header h1{margin:0;font-size:15px;font-weight:650;letter-spacing:-.2px}
+  header p{margin:3px 0 0;font-size:12px;color:var(--muted)}
+  #stage{position:relative;flex:1 1 auto;min-height:0}
+  canvas{display:block;width:100%;height:100%;cursor:grab}
+  canvas:active{cursor:grabbing}
+  #legend{position:absolute;top:10px;left:10px;background:rgba(22,27,34,.86);
+    border:1px solid var(--line);border-radius:10px;padding:9px 11px;max-width:62vw;
+    backdrop-filter:blur(4px)}
+  #legend b{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+  .lg{display:flex;align-items:center;gap:7px;margin-top:5px;font-size:12px;line-height:1.25}
+  .dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto}
+  #tip{position:absolute;pointer-events:none;background:#0d1117;border:1px solid var(--line);
+    border-radius:8px;padding:7px 9px;font-size:12px;max-width:260px;display:none;z-index:5;
+    box-shadow:0 6px 20px rgba(0,0,0,.5)}
+  #tip .t{font-weight:650;margin-bottom:2px}
+  #tip .s{color:var(--muted);font-size:11px}
+  #hint{position:absolute;right:10px;bottom:10px;font-size:11px;color:var(--muted);
+    background:rgba(22,27,34,.7);padding:5px 9px;border-radius:7px;border:1px solid var(--line)}
+  #search{position:absolute;top:10px;right:10px;background:rgba(22,27,34,.86);border:1px solid var(--line);
+    border-radius:8px;padding:5px 8px;color:var(--ink);font-size:12px;width:160px}
+  #search::placeholder{color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <header>
+    <h1>우리캐피탈 오토운영팀 온톨로지 — 지식 그래프</h1>
+    <p>86 노드 · 113 엣지 · 7 커뮤니티 &nbsp;|&nbsp; 노드 크기 = 연결 수(degree) · 색 = 커뮤니티 · 점선 = INFERRED/AMBIGUOUS · 드래그·휠 줌</p>
+  </header>
+  <div id="stage">
+    <canvas id="cv"></canvas>
+    <div id="legend"></div>
+    <input id="search" placeholder="노드 검색…" autocomplete="off">
+    <div id="tip"></div>
+    <div id="hint">드래그=이동 · 휠=줌 · 노드 드래그=고정 · 빈곳 클릭=해제</div>
+  </div>
+</div>
+<script>
+const DATA = {"nodes": [{"id": "loan_product", "label": "론 (구입대출)", "c": 1, "d": 1}, {"id": "mileage_restriction", "label": "주행거리 제한 (LTV 적용)", "c": 2, "d": 2}, {"id": "used_passenger_car", "label": "중고승용", "c": 1, "d": 1}, {"id": "finance_lease", "label": "금융리스", "c": 6, "d": 2}, {"id": "used_lease", "label": "중고리스", "c": 3, "d": 1}, {"id": "minimum_rate", "label": "최저금리", "c": 6, "d": 1}, {"id": "limit_cap", "label": "취급 한도CAP 기준", "c": 3, "d": 1}, {"id": "auto_operations_team", "label": "오토운영팀", "c": 4, "d": 5}, {"id": "loan_period_months", "label": "대출 취급 가능 개월수 (기간)", "c": 1, "d": 1}, {"id": "rationale_residual_recovery_cost", "label": "근거: 차량 컨디션(부식·훼손)에 따른 원상회복비 발생 방지", "c": 3, "d": 1}, {"id": "lease_restricted_vehicles", "label": "중고리스 취급제한차종", "c": 3, "d": 3}, {"id": "rb_judgment", "label": "R판정/B판정 (필터링 취급 가부)", "c": 1, "d": 1}, {"id": "inventory_finance", "label": "재고금융 (운영자금심사)", "c": 4, "d": 1}, {"id": "performance_inspection_record", "label": "성능상태점검기록부 확인", "c": 2, "d": 2}, {"id": "sales_fee", "label": "판촉수수료", "c": 1, "d": 2}, {"id": "encar_sliding", "label": "엔카 슬라이딩", "c": 1, "d": 1}, {"id": "data_source_faq", "label": "FAQ 데이터 (지점 일반문의)", "c": 4, "d": 1}, {"id": "residual_value_ratio", "label": "잔가율 (리스 잔가)", "c": 2, "d": 4}, {"id": "medium_truck", "label": "중형트럭", "c": 2, "d": 1}, {"id": "used_passenger_operation_criteria", "label": "중고승용 상품운영기준", "c": 1, "d": 19}, {"id": "domestic_residual_table", "label": "국산리스 잔가율표", "c": 2, "d": 1}, {"id": "required_documents", "label": "채권서류 징구기준 (기본·증빙서류)", "c": 0, "d": 4}, {"id": "interest_rate_grade", "label": "금리등급", "c": 6, "d": 2}, {"id": "import_residual_table", "label": "수입리스 잔가율표", "c": 2, "d": 1}, {"id": "ontology", "label": "온톨로지", "c": 4, "d": 3}, {"id": "medium_truck_pilot_criteria", "label": "중형트럭 시범운영기준", "c": 2, "d": 11}, {"id": "ai_agent", "label": "에이전트(AI Agent)", "c": 4, "d": 2}, {"id": "dual_offer_product", "label": "듀얼상품 (Dual Offer)", "c": 1, "d": 1}, {"id": "loan_limit", "label": "대출한도", "c": 2, "d": 2}, {"id": "data_source_operation_criteria", "label": "운영기준 데이터 (월별 금리·운영기준)", "c": 4, "d": 5}, {"id": "nice_score", "label": "NICE 신용점수", "c": 6, "d": 1}, {"id": "vehicle_registration_check", "label": "차량등록관리화면 Check", "c": 3, "d": 1}, {"id": "operating_lease", "label": "운용리스", "c": 3, "d": 2}, {"id": "credit_recovery", "label": "신용회복 취급기준", "c": 1, "d": 1}, {"id": "encar_zero_fee", "label": "엔카 무수수료 상품", "c": 1, "d": 2}, {"id": "auto_ops_chatbot", "label": "오토운영팀 챗봇", "c": 4, "d": 4}, {"id": "jb_woori_capital", "label": "JB우리캐피탈", "c": 4, "d": 2}, {"id": "vehicle_appraisal_ratio", "label": "차량설정율", "c": 2, "d": 1}, {"id": "overdue_interest_rate", "label": "연체이자율", "c": 1, "d": 1}, {"id": "quote_via_staff", "label": "견적서 직원 제공 원칙 (딜러→고객 X)", "c": 3, "d": 2}, {"id": "used_lease_operation_criteria", "label": "중고 오토리스 상품운영기준", "c": 3, "d": 13}, {"id": "graph_db", "label": "그래프DB", "c": 4, "d": 2}, {"id": "data_source_regulation", "label": "규정 데이터 (업무 핵심 내부 규정)", "c": 4, "d": 1}, {"id": "credit_relief_product", "label": "신용구제 상품", "c": 1, "d": 2}, {"id": "rationale_truck_pilot_penalty", "label": "근거: 금리네고 부정사용 방지 (대출취소·운영페널티)", "c": 2, "d": 1}, {"id": "branch_hq_nego", "label": "지점/본사 NEGO 기준", "c": 3, "d": 1}, {"id": "gl_rate", "label": "G/L 금리", "c": 6, "d": 4}, {"id": "nego_adjustment_rate", "label": "NEGO 조정금리", "c": 6, "d": 2}, {"id": "css_screening", "label": "심사기준 (CSS)", "c": 1, "d": 5}, {"id": "truck_tonnage_criteria", "label": "취급톤수 조건 (2~10톤 이하 화물차)", "c": 3, "d": 2}, {"id": "vehicle_condition_criteria", "label": "차량조건", "c": 2, "d": 2}, {"id": "esm_dealer_loan", "label": "ESM 딜러구입대출", "c": 1, "d": 1}, {"id": "individual_business_criteria", "label": "개인사업자 사업자 기준", "c": 2, "d": 2}, {"id": "vector_db", "label": "벡터DB", "c": 4, "d": 1}, {"id": "early_repayment_fee", "label": "중도상환 수수료율", "c": 1, "d": 1}, {"id": "individual_rehabilitation", "label": "개인회생 취급기준", "c": 2, "d": 2}, {"id": "lease_irr", "label": "운용리스 IRR (G/L IRR)", "c": 3, "d": 2}, {"id": "rationale_dealer_quote_lawful", "label": "근거: 금소법상 판매 대리·중개(모집인 등록) 준수", "c": 3, "d": 1}, {"id": "sliding", "label": "슬라이딩 (수수료 차감 금리인하)", "c": 1, "d": 2}, {"id": "installment_product", "label": "할부 (구입대출)", "c": 1, "d": 1}, {"id": "used_lease_screening_criteria", "label": "중고 오토리스 심사운영기준(E09024)", "c": 0, "d": 15}, {"id": "used_passenger_screening_criteria", "label": "중고차승용 심사운영기준(E09003)", "c": 0, "d": 17}, {"id": "eligible_customer", "label": "취급가능고객 (개인/개인사업자/법인/외국인)", "c": 0, "d": 2}, {"id": "ineligible_customer", "label": "취급불가 대상자", "c": 0, "d": 3}, {"id": "eligible_vehicle_type", "label": "대상물품·대상차종 (연식·차종 기준)", "c": 0, "d": 3}, {"id": "medium_commercial_vehicle", "label": "중형상용 (2.5~5톤 상용차, 25인승 미만 버스)", "c": 0, "d": 1}, {"id": "document_issuance_period", "label": "채권서류 발급기간 (1개월 이내, 법인인감 3개월)", "c": 0, "d": 1}, {"id": "jabis_system", "label": "JABIS 전산/신용상세조회 시스템", "c": 0, "d": 1}, {"id": "vehicle_price_criteria", "label": "차량가격 적용기준 (DB시세·매매계약서)", "c": 0, "d": 3}, {"id": "db_market_price", "label": "DB시세", "c": 0, "d": 1}, {"id": "ltv_criteria", "label": "LTV 적용기준 (신용평점별 80~100%)", "c": 5, "d": 3}, {"id": "credit_score", "label": "신용평점 (NICE 차주분포)", "c": 5, "d": 2}, {"id": "loan_limit_cap", "label": "대출금 최고한도 기준 (신용평점·상환능력별 한도CAP)", "c": 5, "d": 4}, {"id": "repayment_ability", "label": "상환능력 양호 (재직·소득·재산 증빙)", "c": 5, "d": 1}, {"id": "used_car_practice_guideline", "label": "중고차 영업 관행 개선 가이드라인", "c": 5, "d": 1}, {"id": "carhistory_criteria", "label": "카히스토리 적용기준 (사고·전손·침수·도난)", "c": 0, "d": 2}, {"id": "physical_vehicle_verification", "label": "차량 실물확인 기준", "c": 0, "d": 2}, {"id": "collateral_setup_criteria", "label": "채권확보·차량설정 기준 (설정률 50%/60%)", "c": 0, "d": 1}, {"id": "approval_authority_limit", "label": "전결권자별 전결금액 기준 (지점/본사)", "c": 0, "d": 2}, {"id": "system_auto_approval", "label": "시스템 판정(S판정/자동승인)", "c": 5, "d": 2}, {"id": "no_license_handling", "label": "운전무면허자 취급기준 (가족·직원 운전자)", "c": 5, "d": 3}, {"id": "loan_disbursement_criteria", "label": "대출금지급 기준 (최종 전결권자 승인 확인)", "c": 0, "d": 2}, {"id": "sound_asset_building", "label": "건전한 자산구축 (심사목적)", "c": 0, "d": 2}, {"id": "credit_drop_handling", "label": "고객신용하락 발생시 업무처리 (상담 후 5영업일)", "c": 0, "d": 2}, {"id": "rental_car_exclusion", "label": "렌터카 업체 취급제한", "c": 0, "d": 1}, {"id": "lease_post_management", "label": "리스 사후관리 (등록원부·검사일정 관리)", "c": 0, "d": 1}], "links": [{"s": "loan_product", "t": "used_passenger_operation_criteria", "r": "has_class", "conf": "EXTRACTED"}, {"s": "mileage_restriction", "t": "medium_truck_pilot_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "mileage_restriction", "t": "residual_value_ratio", "r": "semantically_similar_to", "conf": "INFERRED"}, {"s": "used_passenger_car", "t": "used_passenger_operation_criteria", "r": "applies_to", "conf": "EXTRACTED"}, {"s": "finance_lease", "t": "used_lease_operation_criteria", "r": "has_class", "conf": "EXTRACTED"}, {"s": "finance_lease", "t": "interest_rate_grade", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_lease", "t": "used_lease_operation_criteria", "r": "applies_to", "conf": "EXTRACTED"}, {"s": "minimum_rate", "t": "nego_adjustment_rate", "r": "governs", "conf": "EXTRACTED"}, {"s": "limit_cap", "t": "used_lease_operation_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "auto_operations_team", "t": "jb_woori_capital", "r": "has_class", "conf": "EXTRACTED"}, {"s": "auto_operations_team", "t": "auto_ops_chatbot", "r": "governs", "conf": "EXTRACTED"}, {"s": "auto_operations_team", "t": "data_source_faq", "r": "references", "conf": "EXTRACTED"}, {"s": "auto_operations_team", "t": "data_source_regulation", "r": "references", "conf": "EXTRACTED"}, {"s": "auto_operations_team", "t": "data_source_operation_criteria", "r": "references", "conf": "EXTRACTED"}, {"s": "loan_period_months", "t": "used_passenger_operation_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "rationale_residual_recovery_cost", "t": "lease_restricted_vehicles", "r": "rationale_for", "conf": "EXTRACTED"}, {"s": "lease_restricted_vehicles", "t": "used_lease_operation_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "lease_restricted_vehicles", "t": "truck_tonnage_criteria", "r": "semantically_similar_to", "conf": "INFERRED"}, {"s": "rb_judgment", "t": "css_screening", "r": "governs", "conf": "EXTRACTED"}, {"s": "inventory_finance", "t": "data_source_operation_criteria", "r": "references", "conf": "EXTRACTED"}, {"s": "performance_inspection_record", "t": "used_lease_operation_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "performance_inspection_record", "t": "vehicle_condition_criteria", "r": "semantically_similar_to", "conf": "INFERRED"}, {"s": "sales_fee", "t": "used_passenger_operation_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "sales_fee", "t": "sliding", "r": "conceptually_related_to", "conf": "EXTRACTED"}, {"s": "encar_sliding", "t": "encar_zero_fee", "r": "has_property", "conf": "INFERRED"}, {"s": "residual_value_ratio", "t": "used_lease_operation_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "residual_value_ratio", "t": "domestic_residual_table", "r": "references", "conf": "EXTRACTED"}, {"s": "residual_value_ratio", "t": "import_residual_table", "r": "references", "conf": "EXTRACTED"}, {"s": "medium_truck", "t": "medium_truck_pilot_criteria", "r": "applies_to", "conf": "EXTRACTED"}, {"s": "used_passenger_operation_criteria", "t": "data_source_operation_criteria", "r": "references", "conf": "EXTRACTED"}, {"s": "used_passenger_operation_criteria", "t": "medium_truck_pilot_criteria", "r": "references", "conf": "EXTRACTED"}, {"s": "used_passenger_operation_criteria", "t": "installment_product", "r": "has_class", "conf": "EXTRACTED"}, {"s": "used_passenger_operation_criteria", "t": "dual_offer_product", "r": "has_class", "conf": "EXTRACTED"}, {"s": "used_passenger_operation_criteria", "t": "esm_dealer_loan", "r": "has_class", "conf": "EXTRACTED"}, {"s": "used_passenger_operation_criteria", "t": "encar_zero_fee", "r": "has_class", "conf": "EXTRACTED"}, {"s": "used_passenger_operation_criteria", "t": "credit_relief_product", "r": "has_class", "conf": "EXTRACTED"}, {"s": "used_passenger_operation_criteria", "t": "gl_rate", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_operation_criteria", "t": "sliding", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_operation_criteria", "t": "overdue_interest_rate", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_operation_criteria", "t": "early_repayment_fee", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_operation_criteria", "t": "css_screening", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_operation_criteria", "t": "loan_limit", "r": "references", "conf": "EXTRACTED"}, {"s": "used_passenger_operation_criteria", "t": "used_lease_screening_criteria", "r": "references", "conf": "EXTRACTED"}, {"s": "used_passenger_operation_criteria", "t": "used_passenger_screening_criteria", "r": "governs", "conf": "EXTRACTED"}, {"s": "required_documents", "t": "medium_truck_pilot_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "required_documents", "t": "used_lease_screening_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "required_documents", "t": "used_passenger_screening_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "required_documents", "t": "document_issuance_period", "r": "has_property", "conf": "EXTRACTED"}, {"s": "interest_rate_grade", "t": "gl_rate", "r": "has_property", "conf": "EXTRACTED"}, {"s": "ontology", "t": "graph_db", "r": "conceptually_related_to", "conf": "INFERRED"}, {"s": "ontology", "t": "auto_ops_chatbot", "r": "conceptually_related_to", "conf": "EXTRACTED"}, {"s": "ontology", "t": "ai_agent", "r": "references", "conf": "INFERRED"}, {"s": "medium_truck_pilot_criteria", "t": "data_source_operation_criteria", "r": "references", "conf": "EXTRACTED"}, {"s": "medium_truck_pilot_criteria", "t": "truck_tonnage_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "medium_truck_pilot_criteria", "t": "individual_business_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "medium_truck_pilot_criteria", "t": "loan_limit", "r": "has_property", "conf": "EXTRACTED"}, {"s": "medium_truck_pilot_criteria", "t": "vehicle_condition_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "medium_truck_pilot_criteria", "t": "vehicle_appraisal_ratio", "r": "has_property", "conf": "EXTRACTED"}, {"s": "medium_truck_pilot_criteria", "t": "rationale_truck_pilot_penalty", "r": "rationale_for", "conf": "EXTRACTED"}, {"s": "ai_agent", "t": "auto_ops_chatbot", "r": "conceptually_related_to", "conf": "EXTRACTED"}, {"s": "data_source_operation_criteria", "t": "used_lease_operation_criteria", "r": "references", "conf": "EXTRACTED"}, {"s": "nice_score", "t": "gl_rate", "r": "has_property", "conf": "EXTRACTED"}, {"s": "vehicle_registration_check", "t": "used_lease_operation_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "operating_lease", "t": "used_lease_operation_criteria", "r": "has_class", "conf": "EXTRACTED"}, {"s": "operating_lease", "t": "lease_irr", "r": "has_property", "conf": "EXTRACTED"}, {"s": "credit_recovery", "t": "css_screening", "r": "has_class", "conf": "EXTRACTED"}, {"s": "auto_ops_chatbot", "t": "vector_db", "r": "references", "conf": "EXTRACTED"}, {"s": "jb_woori_capital", "t": "graph_db", "r": "uses", "conf": "EXTRACTED"}, {"s": "quote_via_staff", "t": "used_lease_operation_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "quote_via_staff", "t": "rationale_dealer_quote_lawful", "r": "rationale_for", "conf": "EXTRACTED"}, {"s": "used_lease_operation_criteria", "t": "lease_irr", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_lease_operation_criteria", "t": "branch_hq_nego", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_lease_operation_criteria", "t": "used_lease_screening_criteria", "r": "governs", "conf": "EXTRACTED"}, {"s": "credit_relief_product", "t": "css_screening", "r": "governs", "conf": "EXTRACTED"}, {"s": "gl_rate", "t": "nego_adjustment_rate", "r": "has_property", "conf": "EXTRACTED"}, {"s": "css_screening", "t": "individual_rehabilitation", "r": "has_class", "conf": "EXTRACTED"}, {"s": "individual_business_criteria", "t": "individual_rehabilitation", "r": "semantically_similar_to", "conf": "AMBIGUOUS"}, {"s": "used_lease_screening_criteria", "t": "eligible_customer", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_lease_screening_criteria", "t": "ineligible_customer", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_lease_screening_criteria", "t": "eligible_vehicle_type", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_lease_screening_criteria", "t": "vehicle_price_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_lease_screening_criteria", "t": "carhistory_criteria", "r": "references", "conf": "EXTRACTED"}, {"s": "used_lease_screening_criteria", "t": "physical_vehicle_verification", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_lease_screening_criteria", "t": "no_license_handling", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_lease_screening_criteria", "t": "credit_drop_handling", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_lease_screening_criteria", "t": "sound_asset_building", "r": "rationale_for", "conf": "EXTRACTED"}, {"s": "used_lease_screening_criteria", "t": "rental_car_exclusion", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_lease_screening_criteria", "t": "lease_post_management", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_lease_screening_criteria", "t": "used_passenger_screening_criteria", "r": "semantically_similar_to", "conf": "INFERRED"}, {"s": "used_passenger_screening_criteria", "t": "eligible_customer", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_screening_criteria", "t": "ineligible_customer", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_screening_criteria", "t": "eligible_vehicle_type", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_screening_criteria", "t": "vehicle_price_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_screening_criteria", "t": "ltv_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_screening_criteria", "t": "loan_limit_cap", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_screening_criteria", "t": "carhistory_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_screening_criteria", "t": "physical_vehicle_verification", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_screening_criteria", "t": "collateral_setup_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_screening_criteria", "t": "approval_authority_limit", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_screening_criteria", "t": "no_license_handling", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_screening_criteria", "t": "loan_disbursement_criteria", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_screening_criteria", "t": "credit_drop_handling", "r": "has_property", "conf": "EXTRACTED"}, {"s": "used_passenger_screening_criteria", "t": "sound_asset_building", "r": "rationale_for", "conf": "EXTRACTED"}, {"s": "ineligible_customer", "t": "jabis_system", "r": "shares_data_with", "conf": "EXTRACTED"}, {"s": "eligible_vehicle_type", "t": "medium_commercial_vehicle", "r": "has_property", "conf": "EXTRACTED"}, {"s": "vehicle_price_criteria", "t": "db_market_price", "r": "references", "conf": "EXTRACTED"}, {"s": "ltv_criteria", "t": "credit_score", "r": "references", "conf": "EXTRACTED"}, {"s": "ltv_criteria", "t": "used_car_practice_guideline", "r": "references", "conf": "EXTRACTED"}, {"s": "credit_score", "t": "loan_limit_cap", "r": "references", "conf": "EXTRACTED"}, {"s": "loan_limit_cap", "t": "repayment_ability", "r": "references", "conf": "EXTRACTED"}, {"s": "loan_limit_cap", "t": "system_auto_approval", "r": "references", "conf": "EXTRACTED"}, {"s": "approval_authority_limit", "t": "loan_disbursement_criteria", "r": "references", "conf": "EXTRACTED"}, {"s": "system_auto_approval", "t": "no_license_handling", "r": "references", "conf": "EXTRACTED"}], "comm": {"0": "전결권·채권확보·카히스토리", "1": "신용회복·CSS·듀얼상품", "2": "잔가율표·개인사업자/회생 한도", "3": "NEGO·운용리스 IRR·취급제한", "4": "오토운영팀 에이전트·챗봇", "5": "신용평점·LTV·상환능력 한도", "6": "금융리스 금리등급"}};
+const COLORS = ["#ff7b72","#79c0ff","#56d364","#d2a8ff","#ffa657","#f2cc60","#39c5cf","#ff9bce","#a5d6ff"];
+const comm = DATA.comm;
+const nodes = DATA.nodes.map(n=>({...n, x:0,y:0,vx:0,vy:0, r:5+Math.sqrt(n.d)*3.2}));
+const idx = new Map(nodes.map((n,i)=>[n.id,i]));
+const links = DATA.links.map(l=>({source:idx.get(l.s),target:idx.get(l.t),r:l.r,conf:l.conf})).filter(l=>l.source!=null&&l.target!=null);
+
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const stage = document.getElementById('stage'), tip = document.getElementById('tip');
+let W=0,H=0,DPR=Math.min(devicePixelRatio||1,2);
+let view={x:0,y:0,k:1}, dragNode=null, panning=false, last={x:0,y:0}, hoverNode=null, query="";
+
+function resize(){
+  W=stage.clientWidth; H=stage.clientHeight;
+  cv.width=W*DPR; cv.height=H*DPR; cv.style.width=W+'px'; cv.style.height=H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+new ResizeObserver(resize).observe(stage); resize();
+
+// init positions: cluster by community on a circle
+const cset=[...new Set(nodes.map(n=>n.c))];
+nodes.forEach(n=>{
+  const ci=cset.indexOf(n.c), a=ci/cset.length*2*Math.PI;
+  n.x=Math.cos(a)*180 + (Math.random()-.5)*120;
+  n.y=Math.sin(a)*180 + (Math.random()-.5)*120;
+});
+
+// force simulation
+let alpha=1;
+function step(){
+  alpha*=0.992; if(alpha<0.02) alpha=0.02;
+  // repulsion
+  for(let i=0;i<nodes.length;i++){
+    const a=nodes[i];
+    for(let j=i+1;j<nodes.length;j++){
+      const b=nodes[j];
+      let dx=a.x-b.x, dy=a.y-b.y, d2=dx*dx+dy*dy+0.01;
+      let f=(900)/d2; let d=Math.sqrt(d2);
+      let fx=dx/d*f, fy=dy/d*f;
+      a.vx+=fx;a.vy+=fy;b.vx-=fx;b.vy-=fy;
+    }
+  }
+  // springs
+  for(const l of links){
+    const a=nodes[l.source],b=nodes[l.target];
+    let dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy)+0.01;
+    let f=(d-70)*0.02;
+    let fx=dx/d*f, fy=dy/d*f;
+    a.vx+=fx;a.vy+=fy;b.vx-=fx;b.vy-=fy;
+  }
+  // same-community gravity + center
+  for(const n of nodes){
+    n.vx-=n.x*0.002; n.vy-=n.y*0.002;
+    if(n===dragNode) continue;
+    n.x+=n.vx*alpha; n.y+=n.vy*alpha;
+    n.vx*=0.85; n.vy*=0.85;
+  }
+  draw();
+  requestAnimationFrame(step);
+}
+
+function toScreen(n){return {x:(n.x*view.k)+view.x+W/2, y:(n.y*view.k)+view.y+H/2};}
+function fromScreen(px,py){return {x:(px-view.x-W/2)/view.k, y:(py-view.y-H/2)/view.k};}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  // edges
+  for(const l of links){
+    const a=toScreen(nodes[l.source]), b=toScreen(nodes[l.target]);
+    const dashed = l.conf!=='EXTRACTED';
+    const hot = hoverNode && (l.source===hoverNode||l.target===hoverNode);
+    ctx.beginPath();
+    ctx.setLineDash(dashed?[3,3]:[]);
+    ctx.strokeStyle = hot? 'rgba(230,237,243,.85)' : (dashed?'rgba(139,148,158,.35)':'rgba(139,148,158,.22)');
+    ctx.lineWidth = hot?1.6:1;
+    ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  // nodes
+  for(let i=0;i<nodes.length;i++){
+    const n=nodes[i], p=toScreen(n), col=COLORS[n.c%COLORS.length];
+    const match = query && n.label.toLowerCase().includes(query);
+    const dim = query && !match;
+    const isHover = i===hoverNode;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,n.r*Math.sqrt(view.k),0,2*Math.PI);
+    ctx.fillStyle = dim? 'rgba(110,118,129,.25)' : col;
+    ctx.globalAlpha = dim?0.4:1;
+    ctx.fill();
+    if(isHover||match){ctx.lineWidth=2;ctx.strokeStyle='#fff';ctx.stroke();}
+    ctx.globalAlpha=1;
+    // label for hubs / hover / search
+    if(n.d>=5 || isHover || match || view.k>1.6){
+      ctx.font=(isHover?'600 ':'')+Math.max(10,11)+'px -apple-system,sans-serif';
+      ctx.fillStyle = dim?'rgba(139,148,158,.4)':'#e6edf3';
+      ctx.textAlign='center';
+      const t=n.label.length>22?n.label.slice(0,21)+'…':n.label;
+      ctx.fillText(t,p.x,p.y - n.r*Math.sqrt(view.k) - 4);
+    }
+  }
+}
+
+// legend
+const lg=document.getElementById('legend');
+let html='<b>커뮤니티</b>';
+cset.sort((a,b)=>a-b).forEach(c=>{
+  html+=`<div class="lg"><span class="dot" style="background:${COLORS[c%COLORS.length]}"></span>${comm[c]||('C'+c)}</div>`;
+});
+lg.innerHTML=html;
+
+// interaction
+function pick(px,py){
+  for(let i=nodes.length-1;i>=0;i--){
+    const p=toScreen(nodes[i]); const r=nodes[i].r*Math.sqrt(view.k)+3;
+    if((px-p.x)**2+(py-p.y)**2<=r*r) return i;
+  }
+  return null;
+}
+cv.addEventListener('mousedown',e=>{
+  const i=pick(e.offsetX,e.offsetY);
+  if(i!=null){dragNode=nodes[i];} else {panning=true;}
+  last={x:e.offsetX,y:e.offsetY};
+});
+window.addEventListener('mousemove',e=>{
+  const rect=cv.getBoundingClientRect(); const ox=e.clientX-rect.left, oy=e.clientY-rect.top;
+  if(dragNode){const w=fromScreen(ox,oy);dragNode.x=w.x;dragNode.y=w.y;dragNode.vx=0;dragNode.vy=0;}
+  else if(panning){view.x+=ox-last.x;view.y+=oy-last.y;last={x:ox,y:oy};}
+  else {
+    const i=pick(ox,oy); hoverNode=i;
+    if(i!=null){const n=nodes[i];
+      tip.style.display='block';
+      tip.style.left=Math.min(ox+14,W-260)+'px'; tip.style.top=(oy+14)+'px';
+      tip.innerHTML=`<div class="t">${n.label}</div><div class="s">${comm[n.c]||('C'+n.c)} · 연결 ${n.d}</div>`;
+    } else {tip.style.display='none';}
+  }
+});
+window.addEventListener('mouseup',()=>{dragNode=null;panning=false;});
+cv.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const f=e.deltaY<0?1.12:0.89;
+  const mx=e.offsetX-view.x-W/2, my=e.offsetY-view.y-H/2;
+  view.x-=mx*(f-1); view.y-=my*(f-1); view.k*=f;
+  view.k=Math.max(0.3,Math.min(5,view.k));
+},{passive:false});
+document.getElementById('search').addEventListener('input',e=>{query=e.target.value.trim().toLowerCase();});
+
+step();
+</script>
+</body>
+</html>
