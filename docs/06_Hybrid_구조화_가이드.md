@@ -16,11 +16,13 @@
 
 ## .env 설정
 ```
-EMBED_BASE_URL=https://namc-aigw.io.naver.com/v1   # /embeddings 는 클라이언트가 부착
-EMBED_API_KEY=                                      # 비우면 HCX_API_KEY 재사용
-EMBED_MODEL=bge-m3
+EMBED_BASE_URL=http://223.130.140.218:8001/v1      # 전용 vLLM 서버. /embeddings 는 클라이언트가 부착
+EMBED_API_KEY=                                      # 인증 불필요(빈 값). 비우면 HCX_API_KEY 재사용하나 서버가 무시
+EMBED_MODEL=BAAI/bge-m3                              # vLLM 모델 ID는 네임스페이스 접두어 필요 (bge-m3 는 404)
 EMBED_DIM=1024
 ```
+> 갱신(2026-07-15): 사내 게이트웨이(`namc-aigw`) → **전용 vLLM 서버**(`223.130.140.218:8001`)로 전환.
+> 모델 ID도 `bge-m3` → **`BAAI/bge-m3`**(vLLM `/v1/models`의 실제 ID). 차원은 1024로 동일 → 재인덱싱 불필요.
 
 ## 실행 순서 (사내망 + venv 활성화)
 ```bash

@@ -13,6 +13,9 @@
 > 상세 설계는 [`docs/02_Phase1_PoC_설계서.md`](docs/02_Phase1_PoC_설계서.md),
 > 전체 아키텍처는 [`docs/01_전체_아키텍처_설계문서.md`](docs/01_전체_아키텍처_설계문서.md) 참고.
 
+> 📦 **저장소**: `git@github.com:cmefly97/Neo4j_RAG_for_wooricapital.git`
+> (`.env`는 비밀값이라 커밋 대상이 아니다 — 최초 설정은 `.env.example` 참고.)
+
 ## 프로젝트 구조
 ```
 .
@@ -94,8 +97,13 @@ pytest tests/test_llm_connection.py -v -s
 ```
 
 - **Claude**: 일반 인터넷이면 동작 (api.anthropic.com)
+- **Qwen / 임베딩(bge-m3)**: **전용 vLLM 서버**(`223.130.140.218:8000`/`:8001`) 대상 → 해당 서버 도달 가능한 망에서 실행
 - **HyperCLOVA X**: 사내 게이트웨이(`namc-aigw.io.naver.com`) 대상 → **사내망/VPN에서 실행**해야 도달
 - 키 미설정·엔드포인트 도달 불가 시 자동으로 건너뛰거나 명확한 사유를 출력한다.
+
+> ⚠️ **vLLM 모델 ID는 네임스페이스 접두어가 필요하다** — `.env`에 `QWEN_MODEL=Qwen/Qwen3.6-35B-A3B`,
+> `EMBED_MODEL=BAAI/bge-m3` 처럼 지정한다. 접두어 없이(`bge-m3`) 요청하면 `404 model does not exist`.
+> 서버가 제공하는 실제 ID는 `curl http://<host>:<port>/v1/models` 로 확인.
 
 ## PoC 범위 / 현재 상태
 - [x] 프로젝트 골격, Neo4j 적재 스크립트(graph.json), API/UI 스켈레톤

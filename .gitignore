@@ -35,3 +35,9 @@ frontend/node_modules/
 frontend/dist/
 frontend/src/**/*.js
 frontend/vite.config.ts.timestamp-*
+.wtest
+
+backend/
+
+# OMC 툴 런타임 상태 (머신 로컬)
+**/.omc/

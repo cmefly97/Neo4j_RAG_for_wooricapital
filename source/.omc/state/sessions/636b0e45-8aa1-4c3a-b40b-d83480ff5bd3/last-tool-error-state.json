@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"cd \\\"/Users/mac_al03256431/Library/CloudStorage/WORKS드라이브-jinkyu.yoon@nav재corp.com/내 드라이브/Dev/JB_Wooricapital_Auto_Agent/source\\\" 2>/dev/null || cd \\\"/Users/mac_al03256431/Library/CloudSto...",
-  "error": "Exit code 1\nTraceback (most recent call last):\n  File \"<string>\", line 12, in <module>\n    byc[cid].append(labelmap.get(nid, nid))\n    ~~~^^^^^\nTypeError: cannot use 'list' as a dict key (unhashable type: 'list')",
-  "timestamp": "2026-06-26T15:08:46.865Z",
-  "retry_count": 1
-}
