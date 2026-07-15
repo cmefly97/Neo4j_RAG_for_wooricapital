@@ -13,6 +13,7 @@ dist/
 
 # Env / secrets
 .env
+.env.example
 *.local
 
 # OS
