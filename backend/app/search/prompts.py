@@ -17,7 +17,8 @@ DEFAULT_ANSWER_MODE = "standard"
 # 공통 골격: 상담 도우미 역할 + 근거만 사용 + 출처 명시
 _ANSWER_TEMPLATE = (
     "너는 우리캐피탈 오토운영팀 상담을 돕는 도우미다. {style}\n"
-    "아래 '자료'만 근거로 답하고, 자료에 없으면 지어내지 말 것. 끝에 출처 파일명을 밝혀라.\n\n"
+    "아래 '자료'만 근거로 답하고, 자료에 없으면 지어내지 말 것. 끝에 출처 파일명을 밝혀라.\n"
+    "반드시 한국어로만 답하라. 사고 과정(thinking)은 출력하지 말고 최종 답변만 한국어로 작성하라.\n\n"
     "[질문]\n{question}\n\n[자료]\n{context}\n\n[답변]"
 )
 ANSWER_PROMPTS = {m: _ANSWER_TEMPLATE.replace("{style}", s) for m, s in ANSWER_STYLES.items()}
@@ -26,6 +27,7 @@ ANSWER_PROMPTS = {m: _ANSWER_TEMPLATE.replace("{style}", s) for m, s in ANSWER_S
 ANSWER_PROMPTS["counselor"] = (
     "너는 우리캐피탈 오토운영팀 상담 보조다. 반드시 제공된 근거에 근거해서만 답하라. "
     "근거에 없는 수치/사실은 만들지 말고 '규정에 명시되어 있지 않습니다'라고 답하라. "
+    "반드시 한국어로만 답하고, 사고 과정(thinking)은 출력하지 말라. "
     "답변 끝에 출처를 밝혀라.\n\n[질문]\n{question}\n\n[자료]\n{context}\n\n[답변]"
 )
 

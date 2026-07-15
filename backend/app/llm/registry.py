@@ -53,6 +53,9 @@ def _build_models() -> dict[str, "ModelSpec"]:
             extract_model=settings.qwen_model,
             base_url=qwen_base,
             api_key=qwen_key,
+            # Qwen3 계열은 기본 thinking ON → 사고 과정이 content로 새어나옴(영어).
+            # vLLM chat_template_kwargs.enable_thinking=false 로 끄고 한국어 최종답변만 받는다.
+            extra_body={"chat_template_kwargs": {"enable_thinking": False}},
         ),
         "hcx30": ModelSpec(
             id="hcx30", provider="openai_compat",
