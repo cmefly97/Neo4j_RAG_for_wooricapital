@@ -1,10 +1,12 @@
 """
 사용 가능한 LLM 레지스트리. 실제 .env 기반.
-새 모델 추가는 MODELS에 항목 1개 추가로 끝난다.
+
+현재는 기준 베이스 모델 **HCX-30B-Text(hcx-agent-05)** 하나만 운영한다.
+(Claude·HyperCLOVA X·Qwen 등 다른 모델은 모델 관리 부담으로 제거됨 — 2026-07-20)
+새 모델을 다시 추가하려면 MODELS에 항목 1개 추가로 끝난다.
 
 provider:
-  - "anthropic"     : Claude — Anthropic Messages API
-  - "openai_compat" : 사내 게이트웨이(OpenAI 호환 /chat/completions) — HCX, Qwen 등
+  - "openai_compat" : 사내 게이트웨이(OpenAI 호환 /chat/completions) — HCX-30B-Text
 """
 from dataclasses import dataclass
 
@@ -25,38 +27,7 @@ class ModelSpec:
 
 
 def _build_models() -> dict[str, "ModelSpec"]:
-    # Qwen: 전용 값 없으면 HCX 게이트웨이/키 재사용
-    qwen_base = settings.qwen_base_url or settings.hcx_base_url
-    qwen_key = settings.qwen_api_key or settings.hcx_api_key
     return {
-        "claude": ModelSpec(
-            id="claude", provider="anthropic",
-            label=f"Claude ({settings.anthropic_answer_model})",
-            answer_model=settings.anthropic_answer_model,
-            extract_model=settings.anthropic_extract_model,
-            base_url=settings.anthropic_base_url,
-            api_key=settings.anthropic_api_key,
-        ),
-        "hyperclova": ModelSpec(
-            id="hyperclova", provider="openai_compat",
-            label=f"HyperCLOVA X ({settings.hcx_answer_model})",
-            answer_model=settings.hcx_answer_model,
-            extract_model=settings.hcx_extract_model,
-            base_url=settings.hcx_base_url,
-            api_key=settings.hcx_api_key,
-            supports_thinking=True,
-        ),
-        "qwen": ModelSpec(
-            id="qwen", provider="openai_compat",
-            label=f"Qwen ({settings.qwen_model})",
-            answer_model=settings.qwen_model,
-            extract_model=settings.qwen_model,
-            base_url=qwen_base,
-            api_key=qwen_key,
-            # Qwen3 계열은 기본 thinking ON → 사고 과정이 content로 새어나옴(영어).
-            # vLLM chat_template_kwargs.enable_thinking=false 로 끄고 한국어 최종답변만 받는다.
-            extra_body={"chat_template_kwargs": {"enable_thinking": False}},
-        ),
         "hcx30": ModelSpec(
             id="hcx30", provider="openai_compat",
             label=f"HCX-30B-Text ({settings.hcx30_model})",

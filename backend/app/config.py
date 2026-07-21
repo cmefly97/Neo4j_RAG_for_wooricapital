@@ -13,35 +13,15 @@ class Settings(BaseSettings):
     neo4j_user: str = "neo4j"
     neo4j_password: str = "changeme-please"
 
-    # ===== LLM: Anthropic (Claude) =====
-    anthropic_provider: str = "anthropic"
-    anthropic_api_key: str = ""
-    anthropic_base_url: str = "https://api.anthropic.com/v1/messages"
-    anthropic_extract_model: str = "claude-sonnet-4-6"
-    anthropic_answer_model: str = "claude-sonnet-4-6"
-
-    # ===== LLM: HyperCLOVA X (사내 게이트웨이, OpenAI 호환) =====
-    hcx_provider: str = "hyperclova"
-    hcx_api_key: str = ""
-    hcx_base_url: str = ""                 # 예: https://.../v1/chat/completions
-    hcx_extract_model: str = "HyperCLOVAX-SEED-32B-Think-Text"
-    hcx_answer_model: str = "HyperCLOVAX-SEED-32B-Think-Text"
-
-    # ===== LLM: Qwen (사내 게이트웨이, OpenAI 호환) =====
-    # base_url/api_key 미설정 시 HCX 게이트웨이/키를 재사용한다.
-    qwen_api_key: str = ""
-    qwen_base_url: str = ""
-    qwen_model: str = "Qwen3.6-35B-A3B"
-
-    # ===== LLM: HCX-30B-Text (사내 게이트웨이, OpenAI 호환, thinking 지원) =====
+    # ===== LLM: HCX-30B-Text (기준 베이스 모델, OpenAI 호환, thinking 지원) =====
+    # 다른 모델(Claude·HyperCLOVA X·Qwen)은 모델 관리 부담으로 제거됨(2026-07-20).
     hcx30_api_key: str = ""
     hcx30_base_url: str = ""            # 예: http://223.130.140.68:11000/v1/chat/completions
     hcx30_model: str = "hcx-agent-05"
 
-    # ===== Embeddings (사내 게이트웨이, OpenAI 호환 /v1/embeddings) =====
-    # base_url/api_key 미설정 시 HCX 게이트웨이/키를 재사용한다.
+    # ===== Embeddings (bge-m3, OpenAI 호환 /v1/embeddings) =====
     embed_api_key: str = ""
-    embed_base_url: str = ""            # 예: https://namc-aigw.io.naver.com/v1
+    embed_base_url: str = ""            # 예: http://101.79.25.26:8001/v1
     embed_model: str = "bge-m3"
     embed_dim: int = 1024              # bge-m3 = 1024차원
 
@@ -53,13 +33,13 @@ class Settings(BaseSettings):
 
     @property
     def embed_base(self) -> str:
-        """임베딩 base_url. 미설정 시 HCX 게이트웨이 재사용(.../v1 로 정규화)."""
-        url = self.embed_base_url or self.hcx_base_url
+        """임베딩 base_url (.../v1 로 정규화)."""
+        url = self.embed_base_url
         return url.split("/chat/completions")[0].rstrip("/") if url else url
 
     @property
     def embed_key(self) -> str:
-        return self.embed_api_key or self.hcx_api_key
+        return self.embed_api_key
 
     @property
     def source_path(self) -> Path:

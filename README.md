@@ -7,8 +7,8 @@
 
 - **데이터**: FAQ(xlsx) · 규정(docx) · 운영기준(pdf/md) — 비슷한 상품을 다루는 3종 출처
 - **검색 방식**: 자연어 → Cypher 생성(LLM) → Neo4j 조회 → 답변 (+ Cypher 뷰 노출)
-- **LLM 선택**: UI에서 모델 전환 — 기본 **Qwen3.6-35B-A3B**, 옵션 **Claude Opus 4.8**, **HyperCLOVA X Think 32B**
-- **UI**: 사용자 탭(모델 선택/검색/답변/Cypher) · 관리자 탭(업로드/문서리스트/그래프 뷰)
+- **LLM**: 기준 베이스 모델 **HCX-30B-Text(hcx-agent-05)** 단일 운영 (다른 모델은 관리 부담으로 제거, 2026-07-20)
+- **UI**: 사용자 탭(검색/답변/Cypher) · 관리자 탭(업로드/문서리스트/그래프 뷰)
 
 > 상세 설계는 [`docs/02_Phase1_PoC_설계서.md`](docs/02_Phase1_PoC_설계서.md),
 > 전체 아키텍처는 [`docs/01_전체_아키텍처_설계문서.md`](docs/01_전체_아키텍처_설계문서.md) 참고.
@@ -86,28 +86,28 @@ npm run dev   # http://localhost:5173
 
 ## LLM 연결 테스트
 
-`.env`에 키를 넣은 뒤, 등록된 모델에 실제로 짧은 질의를 보내 연결을 점검한다.
+`.env`에 키를 넣은 뒤, 등록된 모델(HCX-30B-Text)에 실제로 짧은 질의를 보내 연결을 점검한다.
 
 ```bash
 cd backend     # venv 활성화 상태(위 0번)에서
-python -m app.scripts.check_llm           # 전체 모델 점검
-python -m app.scripts.check_llm claude    # 특정 모델만
+python -m app.scripts.check_llm           # 모델 점검
 # 또는 pytest
 pytest tests/test_llm_connection.py -v -s
 ```
 
-- **Claude**: 일반 인터넷이면 동작 (api.anthropic.com)
-- **Qwen / 임베딩(bge-m3)**: **전용 vLLM 서버**(`223.130.140.218:8000`/`:8001`) 대상 → 해당 서버 도달 가능한 망에서 실행
-- **HyperCLOVA X**: 사내 게이트웨이(`namc-aigw.io.naver.com`) 대상 → **사내망/VPN에서 실행**해야 도달
+- **HCX-30B-Text (hcx-agent-05)**: 사내 게이트웨이(`.env`의 `HCX30_BASE_URL`) 대상 → **사내망/VPN에서 실행**해야 도달
+- **임베딩(bge-m3)**: 전용 vLLM 서버(`.env`의 `EMBED_BASE_URL`) 대상 → 해당 서버 도달 가능한 망에서 실행
 - 키 미설정·엔드포인트 도달 불가 시 자동으로 건너뛰거나 명확한 사유를 출력한다.
 
-> ⚠️ **vLLM 모델 ID는 네임스페이스 접두어가 필요하다** — `.env`에 `QWEN_MODEL=Qwen/Qwen3.6-35B-A3B`,
-> `EMBED_MODEL=BAAI/bge-m3` 처럼 지정한다. 접두어 없이(`bge-m3`) 요청하면 `404 model does not exist`.
-> 서버가 제공하는 실제 ID는 `curl http://<host>:<port>/v1/models` 로 확인.
+> ⚠️ **vLLM 모델 ID는 네임스페이스 접두어가 필요하다** — `.env`에 `EMBED_MODEL=BAAI/bge-m3` 처럼 지정한다.
+> 접두어 없이(`bge-m3`) 요청하면 `404 model does not exist`. 실제 ID는 `curl http://<host>:<port>/v1/models` 로 확인.
+>
+> ℹ️ 과거에는 Claude·HyperCLOVA X·Qwen을 UI에서 선택할 수 있었으나, **모델 관리 부담으로 제거**하고
+> HCX-30B-Text 단일 모델로 운영한다(2026-07-20). 다시 늘리려면 `app/llm/registry.py`의 MODELS에 추가.
 
 ## PoC 범위 / 현재 상태
 - [x] 프로젝트 골격, Neo4j 적재 스크립트(graph.json), API/UI 스켈레톤
-- [x] LLM 선택 기능: 레지스트리/팩토리, `/models`·`/search(model)`, 사용자 탭 모델 드롭다운
+- [x] LLM 연동: 레지스트리/팩토리, `/models`·`/search`, 단일 모델(HCX-30B-Text) 운영
 - [ ] 형식별 파서 구현 (`backend/app/ingestion/parsers.py`)
 - [ ] LLM 추출(`extract.py`) · NL→Cypher 체인(`search/cypher_qa.py::_llm_nl_to_cypher_and_answer`) 실제 연동
 - [ ] 온톨로지 확정 (`ingestion/ontology.py` ↔ `graph_output/GRAPH_REPORT.md`)

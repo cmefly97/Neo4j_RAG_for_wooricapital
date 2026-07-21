@@ -16,14 +16,14 @@ def test_log_action_writes_dated_file():
     assert f.exists() and "ACTION UNITTEST_ACTION" in f.read_text(encoding="utf-8")
 
 
-def test_list_models_has_two_and_default():
+def test_list_models_has_hcx30_and_default():
     ms = registry.list_models()
-    assert {"claude", "hyperclova", "qwen"} <= {m["id"] for m in ms}
+    assert {"hcx30"} <= {m["id"] for m in ms}
     assert sum(1 for m in ms if m["default"]) == 1
 
 
 def test_get_model_spec_default_and_invalid():
-    assert registry.get_model_spec(None).id == "claude"
+    assert registry.get_model_spec(None).id == "hcx30"
     with pytest.raises(ValueError):
         registry.get_model_spec("no-such-model")
 

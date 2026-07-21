@@ -17,11 +17,10 @@
 - 도메인 온톨로지(스키마) 초안 정의 및 검증
 - **웹 UI를 통한 문서 업로드 → Neo4j 적재** (비동기 처리 + 상태 추적)
 - Neo4j 적재 + KG 기반 검색(자연어 → Cypher → 답변)
-- **LLM 선택 기능**: NL→Cypher 생성 및 답변 생성에 사용할 모델을 UI에서 선택
-  - 1순위(기본): **HCX-30B-Text (hcx-agent-05)**
-  - 추가 옵션: **Qwen3.6-35B-A3B · HyperCLOVA X Think 32B · Claude Opus 4.8**
+- **LLM**: NL→Cypher 생성 및 답변 생성에 **HCX-30B-Text (hcx-agent-05)** 단일 모델 사용
+  - (과거 Qwen3.6 · HyperCLOVA X · Claude Opus 4.8 선택 옵션이 있었으나 **모델 관리 부담으로 제거**, 2026-07-20)
 - **관리자 탭**: 문서 업로드, 업로드 문서 리스트(상태 표시), 그래프 뷰
-- **사용자 탭**: 검색 프롬프트 입력, **모델 선택**, 답변 확인, 생성된 Cypher 쿼리 뷰
+- **사용자 탭**: 검색 프롬프트 입력, 답변 확인, 생성된 Cypher 쿼리 뷰
 
 ### 1.3 Out of Scope (PoC에서 제외 — Phase 2 이후)
 - 커뮤니티 요약(글로벌 질의), 대규모 확장/증분 업데이트
@@ -133,13 +132,11 @@ uploaded → parsing → extracting → loading → completed
 
 | 모델 ID | 표시명 | Provider | 호출 방식 | 비고 |
 |---|---|---|---|---|
-| `qwen` | Qwen3.6-35B-A3B | 사내 게이트웨이(OpenAI 호환) | `ChatOpenAI` | HCX 게이트웨이/키 재사용. 배치 추출(build_structured)에 권장(비추론·빠름) |
-| `hyperclova` | HyperCLOVA X Think 32B | 사내 게이트웨이(OpenAI 호환) | `ChatOpenAI` | 한국어·추론(thinking) 특화 |
-| `hcx30` | HCX-30B-Text (`hcx-agent-05`) | 사내 게이트웨이(OpenAI 호환) | `ChatOpenAI` + `extra_body` | **현재 기본값**(2026-06-30). `chat_template_kwargs.thinking=true` 전달 |
-| `claude` | Claude Opus 4.8 | Anthropic | `langchain-anthropic` `ChatAnthropic` | 강력한 추론·코드(Cypher) 생성 |
+| `hcx30` | HCX-30B-Text (`hcx-agent-05`) | 사내 게이트웨이(OpenAI 호환) | `ChatOpenAI` + `extra_body` | **유일 운영 모델**. `chat_template_kwargs.thinking=true` 전달 |
 
-> 갱신: 기본 모델은 Claude → Qwen3.6 → **HCX-30B-Text**(2026-06-30)로 변경됨. (배치 추출은 Qwen 권장)
-> 새 모델은 `registry.py`의 `MODELS`에 1줄 추가로 등록(확장성 유지).
+> 갱신 이력: 기본 모델 Claude → Qwen3.6 → HCX-30B-Text(2026-06-30).
+> **2026-07-20: 모델 관리 부담으로 Qwen·HyperCLOVA X·Claude를 제거하고 HCX-30B-Text 단일 운영으로 정리.**
+> 다시 늘리려면 `registry.py`의 `MODELS`에 1줄 추가로 등록(확장성 유지).
 
 **추상화 설계**
 - 모델별 설정을 **레지스트리(registry)** 로 분리하고, `model_id`로 LangChain Chat 모델을 생성하는 **팩토리(factory)** 를 둔다.

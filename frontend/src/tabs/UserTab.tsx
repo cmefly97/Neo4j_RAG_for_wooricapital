@@ -45,13 +45,13 @@ function explain(status?: string, error?: string): Explain | null {
   if (status === "no_db") return { kind: "error", title: "데이터베이스에 연결할 수 없어요", detail: "Neo4j 서버에 연결하지 못했습니다.", hint: "백엔드 실행·VPN·방화벽·.env(NEO4J_URI)를 확인하세요." };
   if (status === "no_vector") return { kind: "info", title: "벡터 검색이 준비되지 않았어요", detail: "비교하려면 임베딩·벡터 인덱스가 필요합니다.", hint: "백엔드에서 setup_hybrid 를 먼저 실행하세요." };
   if (status === "llm_error") {
-    let hint = "잠시 후 다시 시도하거나 상단에서 다른 모델을 선택해 보세요.";
-    if (/ratelimit|rate.?limit|429/i.test(e)) hint = "요청이 몰려 일시 제한(RateLimit)됐습니다. 잠시 후 재시도하거나 다른 모델을 선택하세요.";
+    let hint = "잠시 후 다시 시도해 보세요. 문제가 계속되면 모델 서버 상태를 확인하세요.";
+    if (/ratelimit|rate.?limit|429/i.test(e)) hint = "요청이 몰려 일시 제한(RateLimit)됐습니다. 잠시 후 재시도하세요.";
     else if (/timeout|connect|network|gateway/i.test(e)) hint = "모델 게이트웨이 연결이 지연/실패했습니다. 사내망/VPN을 확인하세요.";
     else if (/401|403|auth|api key|unauthorized/i.test(e)) hint = "모델 인증 실패. .env의 API 키를 확인하세요.";
     return { kind: "warn", title: "AI 답변 생성에 실패했어요", detail: e || "모델 호출 중 오류가 발생했습니다.", hint, fallback: true };
   }
-  if (status === "no_key") return { kind: "info", title: "AI 요약을 생략했어요", detail: "선택한 모델의 API 키가 없습니다.", hint: ".env에 키를 넣거나 다른 모델을 선택하세요.", fallback: true };
+  if (status === "no_key") return { kind: "info", title: "AI 요약을 생략했어요", detail: "모델의 API 키가 없습니다.", hint: ".env에 HCX30_API_KEY를 넣으세요.", fallback: true };
   if (status === "no_results") return { kind: "info", title: "관련 내용을 찾지 못했어요", detail: "검색된 문서가 없습니다.", hint: "질문 표현을 바꿔 보세요." };
   if (status === "no_chunks") return { kind: "info", title: "적재된 문서가 없어요", detail: "검색할 데이터가 비어 있습니다.", hint: "ingest_source → setup_hybrid 를 먼저 실행하세요." };
   return null;
@@ -215,14 +215,9 @@ export default function UserTab() {
 
       <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 8, flexWrap: "wrap" }}>
         <span>🤖 모델</span>
-        <select value={model} onChange={(e) => setModel(e.target.value)} style={{ padding: 6 }}>
-          {models.length === 0 && <option value="">모델 로딩 중…</option>}
-          {models.map((m) => (
-            <option key={m.id} value={m.id} disabled={!m.available}>
-              {m.label}{m.default ? " (기본)" : ""}{m.available ? "" : " — 키 미설정"}
-            </option>
-          ))}
-        </select>
+        <span className="chip" style={{ background: "#eef2f6", fontWeight: 600 }}>
+          {models.find((m) => m.id === model)?.label ?? "HCX-30B-Text"}
+        </span>
         <label style={{ marginLeft: 8, fontSize: 13, color: "#3a4654", cursor: "pointer", userSelect: "none" }}>
           <input type="checkbox" checked={compareMode} onChange={(e) => setCompareMode(e.target.checked)} style={{ marginRight: 5 }} />
           🔬 벡터 vs Hybrid 비교

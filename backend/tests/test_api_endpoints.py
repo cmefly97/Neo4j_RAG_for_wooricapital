@@ -3,7 +3,7 @@ API 엔드포인트 단위 테스트 (TestClient, run_search/Neo4j mock).
 
 테스트 계획:
   GET /health            : 200 {status: ok}
-  GET /models            : 2개 모델 반환, claude 기본
+  GET /models            : HCX-30B-Text 반환, hcx30 기본
   POST /search           : run_search mock → 200 + 액션 로그(SEARCH_REQUEST/OK)
   POST /search 예외       : run_search 예외 → 500 {error:...} + SEARCH_ERROR 로그
   GET /admin/documents   : source_dir mock → 파일 목록
@@ -40,14 +40,14 @@ def test_models():
     r = client.get("/models")
     assert r.status_code == 200
     ms = r.json()["models"]
-    assert any(m["id"] == "claude" and m["default"] for m in ms)
+    assert any(m["id"] == "hcx30" and m["default"] for m in ms)
 
 
 def test_search_ok_logs(monkeypatch):
     monkeypatch.setattr(search_api, "run_search",
         lambda q, m: {"answer": "ok", "cypher": "MATCH (n) RETURN n",
                       "rows": [{"n": 1}], "model_used": "Claude"})
-    r = client.post("/search", json={"question": "테스트질문", "model": "claude"})
+    r = client.post("/search", json={"question": "테스트질문", "model": "hcx30"})
     assert r.status_code == 200
     log = _today_log()
     assert "SEARCH_REQUEST" in log and "SEARCH_OK" in log

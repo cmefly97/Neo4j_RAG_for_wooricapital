@@ -76,7 +76,7 @@ SAMPLES = [
 
 @pytest.mark.parametrize("q,expected", SAMPLES, ids=[s[0][:12] for s in SAMPLES])
 def test_sample_questions_retrieve_correct_chunk(patched, q, expected):
-    r = qa.search(q, "hyperclova")
+    r = qa.search(q, "hcx30")
     assert r["rows"], f"검색 결과 없음: {q}"
     assert expected in r["rows"][0]["text"], (
         f"최상위 청크에 기대값 '{expected}' 없음. top={r['rows'][0]['text'][:80]}")
@@ -88,7 +88,7 @@ def test_no_chunks_falls_back_to_entity(monkeypatch):
     class Empty(FakeClient):
         def __init__(self): super().__init__(chunks=[])
     monkeypatch.setattr(qa, "client", Empty())
-    r = qa.search("듀얼상품?", "claude")
+    r = qa.search("듀얼상품?", "hcx30")
     assert "청크 미적재" in r["model_used"]
 
 
@@ -96,7 +96,7 @@ def test_no_chunks_falls_back_to_entity(monkeypatch):
 def test_llm_unavailable_returns_excerpt(monkeypatch):
     monkeypatch.setattr(qa, "client", FakeClient())
     monkeypatch.setattr(qa, "_is_available", lambda spec: False)
-    r = qa.search("엔카 슬라이딩 가능해?", "claude")
+    r = qa.search("엔카 슬라이딩 가능해?", "hcx30")
     assert "슬라이딩" in r["answer"] and r["rows"]
 
 
@@ -106,13 +106,13 @@ def test_llm_error_degrades_gracefully(monkeypatch):
     monkeypatch.setattr(qa, "_is_available", lambda spec: True)
     def boom(mid): raise RuntimeError("LLM down")
     monkeypatch.setattr(qa, "build_chat_model", boom)
-    r = qa.search("엔카 슬라이딩 가능해?", "claude")
+    r = qa.search("엔카 슬라이딩 가능해?", "hcx30")
     assert "LLM 오류" in r["model_used"] and r["rows"]
 
 
 # ── 매칭 없음 → 안내 메시지 ──────────────────────────────
 def test_no_match_message(patched):
-    r = qa.search("아무관련없는질문xyz", "hyperclova")
+    r = qa.search("아무관련없는질문xyz", "hcx30")
     assert r["rows"] == [] and "찾지 못했" in r["answer"]
 
 
@@ -123,6 +123,6 @@ def test_neo4j_down_returns_friendly(monkeypatch):
         def run_readonly(self, c, p=None):
             raise ServiceUnavailable("Couldn't connect to localhost:7687 ... refused")
     monkeypatch.setattr(qa, "client", Down())
-    r = qa.search("엔카 슬라이딩 가능해?", "claude")
+    r = qa.search("엔카 슬라이딩 가능해?", "hcx30")
     assert r["rows"] == [] and "Neo4j" in r["answer"]
     assert "미연결" in r["model_used"]
