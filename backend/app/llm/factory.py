@@ -28,8 +28,9 @@ def build_chat_model(model_id: str | None = None, *, role: str = "answer",
     """disable_extra_body=True → thinking 등 extra_body 미전달(빈 응답 재시도용)."""
     spec: ModelSpec = get_model_spec(model_id)
     model_name = spec.extract_model if role == "extract" else spec.answer_model
-    # thinking 모델은 추론 토큰이 출력 한도를 소비 → 최종 답변이 빈 문자열로 잘리는 것 방지
-    max_tokens = 8192 if spec.supports_thinking else 4096
+    # spec.max_tokens 지정 시 우선. 미지정이면 thinking 모델은 추론 토큰이 출력 한도를
+    # 소비하므로 넉넉히(최종 답변이 빈 문자열로 잘리는 것 방지).
+    max_tokens = spec.max_tokens or (8192 if spec.supports_thinking else 4096)
 
     if spec.provider == "anthropic":
         from langchain_anthropic import ChatAnthropic

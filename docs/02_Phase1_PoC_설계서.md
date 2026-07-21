@@ -17,7 +17,7 @@
 - 도메인 온톨로지(스키마) 초안 정의 및 검증
 - **웹 UI를 통한 문서 업로드 → Neo4j 적재** (비동기 처리 + 상태 추적)
 - Neo4j 적재 + KG 기반 검색(자연어 → Cypher → 답변)
-- **LLM**: NL→Cypher 생성 및 답변 생성에 **HCX-30B-Text (hcx-agent-05)** 단일 모델 사용
+- **LLM**: NL→Cypher 생성 및 답변 생성에 **HCX-30B-Text (hcx-agent-06)** 단일 모델 사용
   - (과거 Qwen3.6 · HyperCLOVA X · Claude Opus 4.8 선택 옵션이 있었으나 **모델 관리 부담으로 제거**, 2026-07-20)
 - **관리자 탭**: 문서 업로드, 업로드 문서 리스트(상태 표시), 그래프 뷰
 - **사용자 탭**: 검색 프롬프트 입력, 답변 확인, 생성된 Cypher 쿼리 뷰
@@ -132,7 +132,7 @@ uploaded → parsing → extracting → loading → completed
 
 | 모델 ID | 표시명 | Provider | 호출 방식 | 비고 |
 |---|---|---|---|---|
-| `hcx30` | HCX-30B-Text (`hcx-agent-05`) | 사내 게이트웨이(OpenAI 호환) | `ChatOpenAI` + `extra_body` | **유일 운영 모델**. `chat_template_kwargs.thinking=true` 전달 |
+| `hcx30` | HCX-30B-Text (`hcx-agent-06`) | 사내 게이트웨이(OpenAI 호환) | `ChatOpenAI` + `extra_body` | **유일 운영 모델**. `chat_template_kwargs.thinking=true` 전달 |
 
 > 갱신 이력: 기본 모델 Claude → Qwen3.6 → HCX-30B-Text(2026-06-30).
 > **2026-07-20: 모델 관리 부담으로 Qwen·HyperCLOVA X·Claude를 제거하고 HCX-30B-Text 단일 운영으로 정리.**
@@ -252,7 +252,7 @@ uploaded → parsing → extracting → loading → completed
 | 메타 저장 | SQLite(PoC) | 문서 처리 상태/라이프사이클 |
 | 파싱 | pandas/openpyxl(xlsx), python-docx(docx), PyMuPDF/Unstructured(pdf), 마크다운 파서(md) | 형식별 분기 |
 | 추출/검색 | LangChain (`LLMGraphTransformer`, `GraphCypherQAChain`) | NL→Cypher |
-| **LLM(선택형)** | 기본 **HCX-30B-Text(hcx-agent-05)** · **Qwen3.6-35B-A3B** · **HyperCLOVA X Think 32B**(사내 게이트웨이, OpenAI 호환) · **Claude Opus 4.8**(`langchain-anthropic`) | 레지스트리+팩토리로 추상화, UI 선택 |
+| **LLM** | **HCX-30B-Text(hcx-agent-06)** 단일 운영(사내 게이트웨이, OpenAI 호환, `ChatOpenAI`+`extra_body`) | 레지스트리+팩토리로 추상화 (다른 모델은 관리 부담으로 제거, 2026-07-20) |
 | 저장/인프라 | 로컬 파일 or MinIO | PoC는 단순하게 |
 
 ---

@@ -20,7 +20,7 @@
   - 관리자(`app/api/admin.py`): 업로드 → 파싱/추출 → Neo4j 적재 / 문서리스트 / 그래프 뷰
   - 사용자(`app/api/search.py` → `app/search/cypher_qa.py`): 자연어 → Cypher → 답변
   - **LLM**: `app/llm/`(registry+factory). `/models`로 목록 제공, `/search`의 `model` 파라미터로 선택.
-    **HCX-30B-Text(hcx-agent-05, 사내 게이트웨이) 단일 운영.** 다른 모델(Qwen·HyperCLOVA X·Claude)은
+    **HCX-30B-Text(hcx-agent-06, 사내 게이트웨이) 단일 운영.** 다른 모델(Qwen·HyperCLOVA X·Claude)은
     모델 관리 부담으로 제거됨(2026-07-20). 다시 추가하려면 `app/llm/registry.py`의 MODELS에 1개 추가. 키는 `.env`.
 - **Neo4j** 단일 저장소. 모든 엔티티는 `:Entity {id, label, norm_label, file_type, source_file, community}`,
   관계는 `:REL {relation, confidence, confidence_score, source_file, weight}` (relation은 속성으로 저장).

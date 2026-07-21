@@ -7,7 +7,7 @@
 
 - **데이터**: FAQ(xlsx) · 규정(docx) · 운영기준(pdf/md) — 비슷한 상품을 다루는 3종 출처
 - **검색 방식**: 자연어 → Cypher 생성(LLM) → Neo4j 조회 → 답변 (+ Cypher 뷰 노출)
-- **LLM**: 기준 베이스 모델 **HCX-30B-Text(hcx-agent-05)** 단일 운영 (다른 모델은 관리 부담으로 제거, 2026-07-20)
+- **LLM**: 기준 베이스 모델 **HCX-30B-Text(hcx-agent-06)** 단일 운영 (다른 모델은 관리 부담으로 제거, 2026-07-20)
 - **UI**: 사용자 탭(검색/답변/Cypher) · 관리자 탭(업로드/문서리스트/그래프 뷰)
 
 > 상세 설계는 [`docs/02_Phase1_PoC_설계서.md`](docs/02_Phase1_PoC_설계서.md),
@@ -95,7 +95,7 @@ python -m app.scripts.check_llm           # 모델 점검
 pytest tests/test_llm_connection.py -v -s
 ```
 
-- **HCX-30B-Text (hcx-agent-05)**: 사내 게이트웨이(`.env`의 `HCX30_BASE_URL`) 대상 → **사내망/VPN에서 실행**해야 도달
+- **HCX-30B-Text (hcx-agent-06)**: 사내 게이트웨이(`.env`의 `HCX30_BASE_URL`) 대상 → **사내망/VPN에서 실행**해야 도달
 - **임베딩(bge-m3)**: 전용 vLLM 서버(`.env`의 `EMBED_BASE_URL`) 대상 → 해당 서버 도달 가능한 망에서 실행
 - 키 미설정·엔드포인트 도달 불가 시 자동으로 건너뛰거나 명확한 사유를 출력한다.
 
