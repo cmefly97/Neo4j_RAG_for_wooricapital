@@ -40,3 +40,9 @@ frontend/vite.config.ts.timestamp-*
 
 # OMC 툴 런타임 상태 (머신 로컬)
 **/.omc/
+
+# Playwright(브라우저 확인) 산출물
+.playwright-mcp/
+*.playwright-mcp
+user-tab.png
+page-*.png

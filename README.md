@@ -8,7 +8,9 @@
 - **데이터**: FAQ(xlsx) · 규정(docx) · 운영기준(pdf/md) — 비슷한 상품을 다루는 3종 출처
 - **검색 방식**: 자연어 → Cypher 생성(LLM) → Neo4j 조회 → 답변 (+ Cypher 뷰 노출)
 - **LLM**: 기준 베이스 모델 **HCX-30B-Text(hcx-agent-06)** 단일 운영 (다른 모델은 관리 부담으로 제거, 2026-07-20)
+  - 호출 옵션: `max_tokens=1000`, thinking 비활성(`chat_template_kwargs.thinking=false`) — `app/llm/registry.py`
 - **UI**: 사용자 탭(검색/답변/Cypher) · 관리자 탭(업로드/문서리스트/그래프 뷰)
+- **설정**: 모든 접속 정보·키는 `.env`에서만 로드(하드코딩 없음). 누락 시 백엔드 기동이 즉시 실패(fail-fast) — `app/config.py`
 
 > 상세 설계는 [`docs/02_Phase1_PoC_설계서.md`](docs/02_Phase1_PoC_설계서.md),
 > 전체 아키텍처는 [`docs/01_전체_아키텍처_설계문서.md`](docs/01_전체_아키텍처_설계문서.md) 참고.
